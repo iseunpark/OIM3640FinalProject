@@ -1,15 +1,15 @@
 import os
 import re
 import pandas as pd
-import openai
+from openai import OpenAI
 from flask import Flask, render_template, request, jsonify
 from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
 
-# Load API key
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# Initialize OpenAI client
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -95,7 +95,7 @@ def chat():
     )
 
     try:
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-4o",
             messages=[
                 {"role": "system", "content": system_prompt},

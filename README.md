@@ -108,7 +108,7 @@ if price > 0 and hp > 0:
 
 ---
 
-## 📥 Installation & Setup
+## Installation & Setup
 
 ### Prerequisites
 - Python 3.8 or higher
@@ -139,7 +139,7 @@ if price > 0 and hp > 0:
 
 ---
 
-## 📊 Results & Capabilities
+## Results & Capabilities
 
 ### Successfully Implemented Features
 1. **Efficient Vehicle Search**: Users can quickly find specific vehicles among 400+ models
@@ -150,7 +150,7 @@ if price > 0 and hp > 0:
 
 ---
 
-## 🚀 Future Enhancements
+## Future Enhancements
 
 ### Database Expansion
 - Integration with real-time pricing APIs
@@ -196,7 +196,9 @@ This project utilized AI assistance for:
 - Performance-to-Price equation implementation assistance
 - Dataset management assistance
 - Vehicle comparison implementation
+- Implementation of JQuery for seamless interaction
 - General code organization
+- Chatbot integration
 
 ## Learning Outcomes Achieved
 
