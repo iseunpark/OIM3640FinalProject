@@ -103,7 +103,7 @@ if price > 0 and hp > 0:
 ---
 
 ### Key Pivots & Decisions
-1. **API to CSV Migration**: Discovered API Ninjas limitations early and pivoted to local CSV database, ensuring reliability and comprehensive data access
+1. **API to CSV Migration**: Discovered API Ninjas limitations early (claimed to provide certain datas including fuel economy for free but does not) and pivoted to local CSV database, ensuring reliability and comprehensive data access
 2. **AI Integration**: Recognized opportunity to enhance user experience with AI advisor, going beyond original MVP
 
 ---
