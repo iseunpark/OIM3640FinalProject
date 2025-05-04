@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Help - Vehicle Comparison Guide</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+  <div class="help-container">
+    <h1>Vehicle Comparison Guide</h1>
+    <p><a href="/" class="back-link">← Back to Comparison</a></p>
+
+    <div class="help-content">
+      <h2>Understanding Vehicle Specifications</h2>
+      <p>This guide explains what each specification means when comparing vehicles.</p>
+
+      <div class="metric-section">
+        <h3>Company</h3>
+        <p>The manufacturer or brand of the vehicle. This indicates who builds the car, such as Toyota, Ford, BMW, etc.</p>
+      </div>
+
+      <div class="metric-section">
+        <h3>Model</h3>
+        <p>The specific model name of the vehicle within a manufacturer's lineup (e.g., Camry, F-150, 3 Series).</p>
+      </div>
+
+      <div class="metric-section">
+        <h3>Horsepower</h3>
+        <p>Engine power output measured in horsepower (hp). Typically shown as "XXX hp @ XXXX rpm".</p>
+        <p><strong>What to look for:</strong> Higher horsepower means faster acceleration but lower fuel economy.</p>
+      </div>
+
+      <div class="metric-section">
+        <h3>Torque</h3>
+        <p>Rotational force (lb-ft) affecting acceleration and towing.</p>
+        <p><strong>What to look for:</strong> High torque at low RPMs means better daily performance and towing.</p>
+      </div>
+
+      <div class="metric-section">
+        <h3>Transmission Type</h3>
+        <ul>
+          <li><strong>Automatic:</strong> Shifts gears automatically</li>
+          <li><strong>Manual:</strong> Driver manually shifts gears</li>
+          <li><strong>CVT:</strong> Continuously variable with no fixed gear ratios</li>
+          <li><strong>Dual-clutch:</strong> Automated manual with rapid shifting</li>
+        </ul>
+      </div>
+
+      <div class="metric-section">
+        <h3>Drivetrain</h3>
+        <ul>
+          <li><strong>FWD:</strong> Front-Wheel Drive</li>
+          <li><strong>RWD:</strong> Rear-Wheel Drive</li>
+          <li><strong>AWD:</strong> All-Wheel Drive</li>
+          <li><strong>4WD:</strong> Four-Wheel Drive (selectable)</li>
+        </ul>
+      </div>
+
+      <div class="metric-section">
+        <h3>Fuel Economy</h3>
+        <p>Miles per gallon (MPG) in city and highway.</p>
+        <p><strong>Format:</strong> "XX city/YY highway mpg"</p>
+        <p><strong>What to look for:</strong> Higher MPG = lower fuel costs + better efficiency.</p>
+      </div>
+
+      <div class="metric-section">
+        <h3>Number of Doors</h3>
+        <p>Total doors including rear hatch (if applicable). Affects passenger access and cargo convenience.</p>
+      </div>
+
+      <div class="metric-section">
+        <h3>Price</h3>
+        <p>Listed as MSRP. May be a single value or a range like "$25,000 - $35,000".</p>
+        <p><strong>Note:</strong> Real prices vary by dealer and location.</p>
+      </div>
+
+      <div class="metric-section">
+        <h3>Model Year Range</h3>
+        <p>The years during which the vehicle was available. E.g., "2018–2022" or "2021–present".</p>
+      </div>
+
+      <div class="metric-section">
+        <h3>Body Type</h3>
+        <ul>
+          <li><strong>Sedan:</strong> 4-door with a trunk</li>
+          <li><strong>SUV:</strong> Sport Utility Vehicle</li>
+          <li><strong>Truck:</strong> Pickup with cargo bed</li>
+          <li><strong>Coupe:</strong> 2-door, sporty style</li>
+          <li><strong>Hatchback:</strong> Rear hatch opens upward</li>
+          <li><strong>Wagon:</strong> Extended cargo behind rear seats</li>
+        </ul>
+      </div>
+
+      <div class="metric-section">
+        <h3>Engine Type</h3>
+        <ul>
+          <li>Layout: V6, I4, V8, etc.</li>
+          <li>Displacement in liters</li>
+          <li>Tech features: turbo, hybrid, EV</li>
+        </ul>
+      </div>
+
+      <div class="metric-section">
+        <h3>Number of Cylinders</h3>
+        <ul>
+          <li><strong>3–4 cylinders:</strong> Fuel efficient</li>
+          <li><strong>6 cylinders:</strong> Balanced performance</li>
+          <li><strong>8+ cylinders:</strong> High power, lower efficiency</li>
+        </ul>
+      </div>
+
+      <div class="metric-section">
+        <h3>HP per $1000</h3>
+        <p>This value shows how much horsepower you get per $1,000 spent.</p>
+        <p><strong>Formula:</strong> Horsepower ÷ (Price ÷ 1000)</p>
+        <p><strong>What to look for:</strong> Higher = better value for performance.</p>
+      </div>
+
+      <hr>
+
+      <div class="help-section">
+        <h2>Visual Indicators</h2>
+        <ul>
+          <li><span class="indicator">★</span> = Best value indicator</li>
+          <li><span style="background-color: #e8f5e9; padding: 2px 6px;">Green highlight</span> = Better value</li>
+          <li><strong>Bold</strong> = Emphasizes winner in a metric</li>
+        </ul>
+      </div>
+
+      <div class="help-section">
+        <h2>Tips for Comparison</h2>
+        <ul>
+          <li>Match car types (e.g., SUV vs SUV)</li>
+          <li>Use HP per $1000 for value comparison</li>
+          <li>Factor in your usage: city, off-road, family</li>
+          <li>Higher isn’t always better (e.g., price)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

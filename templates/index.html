@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Compare Two Vehicles</title>
+    
+    <!-- jQuery, Select2 -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Compare Two Vehicles</h1>
+    <p><a href="/help" class="help-link">Need help? View our comparison guide →</a></p>
+
+    <div class="main-container">
+        <div class="comparison-section">
+            <form id="comparisonForm">
+                <h3>Vehicle 1</h3>
+                <label for="company1">Select Company:</label>
+                <select id="company1" name="company1">
+                    <option disabled selected>Select Company</option>
+                    {% for company in companies %}
+                    <option value="{{ company }}">{{ company }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="model1">Select Model:</label>
+                <select id="model1" name="model1">
+                    <option disabled selected>Select Model</option>
+                </select>
+
+                <h3>Vehicle 2</h3>
+                <label for="company2">Select Company:</label>
+                <select id="company2" name="company2">
+                    <option disabled selected>Select Company</option>
+                    {% for company in companies %}
+                    <option value="{{ company }}">{{ company }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="model2">Select Model:</label>
+                <select id="model2" name="model2">
+                    <option disabled selected>Select Model</option>
+                </select>
+
+                <button type="submit">Compare</button>
+            </form>
+
+            <div id="comparisonResults"></div>
+        </div>
+
+        <div class="chat-section">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <h3>Car Buying Advisor</h3>
+                    <p>Ask me anything about choosing the right vehicle!</p>
+                </div>
+                <div class="chat-messages" id="chatMessages">
+                    <div class="bot-message">
+                        <p>Hello! I'm your car buying advisor. I can help you understand vehicle specifications, compare different models, and make informed decisions based on your needs. What questions do you have about choosing a vehicle?</p>
+                    </div>
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="userMessage" placeholder="Type your question here..." />
+                    <button id="sendMessage">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#company1, #model1, #company2, #model2').select2({
+                placeholder: "Select option"
+            });
+        });
+
+        function loadModels(companyId, modelId) {
+            const company = $(`#${companyId}`).val();
+            $.post("/get_models", { company: company }, function(models) {
+                const modelSelect = $(`#${modelId}`);
+                modelSelect.empty();
+                modelSelect.append(`<option disabled selected>Select Model</option>`);
+                models.forEach(model => {
+                    modelSelect.append(`<option value="${model}">${model}</option>`);
+                });
+                modelSelect.trigger('change');
+            });
+        }
+
+        $('#company1').on('change', function() {
+            loadModels("company1", "model1");
+        });
+
+        $('#company2').on('change', function() {
+            loadModels("company2", "model2");
+        });
+
+        // Helper function to extract numeric values
+        function extractNumeric(value) {
+            if (typeof value !== 'string') return null;
+            const match = value.match(/(\d+(?:\.\d+)?)/);
+            return match ? parseFloat(match[1]) : null;
+        }
+
+        // Function to determine which value is better for each metric
+        function compareMetrics(data) {
+            const metrics = {
+                'Horsepower': { extractor: (val) => extractNumeric(val), higherIsBetter: true },
+                'Torque': { extractor: (val) => extractNumeric(val), higherIsBetter: true },
+                'Fuel Economy': { 
+                    extractor: (val) => {
+                        const cityMatch = val.match(/(\d+)\s*city/i);
+                        const highwayMatch = val.match(/(\d+)\s*highway/i);
+                        
+                        if (cityMatch && highwayMatch) {
+                            const city = parseFloat(cityMatch[1]);
+                            const highway = parseFloat(highwayMatch[1]);
+                            return (city + highway) / 2;
+                        } else if (cityMatch) {
+                            return parseFloat(cityMatch[1]);
+                        } else if (highwayMatch) {
+                            return parseFloat(highwayMatch[1]);
+                        }
+                        
+                        const genericMatch = val.match(/(\d+)\s*mpg/i);
+                        return genericMatch ? parseFloat(genericMatch[1]) : null;
+                    }, 
+                    higherIsBetter: true 
+                },
+                'Price': { 
+                    extractor: (val) => {
+                        const match = val.match(/\$([0-9,]+)/);
+                        return match ? parseFloat(match[1].replace(/,/g, '')) : null;
+                    }, 
+                    higherIsBetter: false 
+                },
+                'Number of Cylinders': { extractor: (val) => extractNumeric(val), higherIsBetter: true },
+                'Number of Doors': { extractor: (val) => extractNumeric(val), higherIsBetter: true },
+                'HP per $1000': { extractor: (val) => extractNumeric(val), higherIsBetter: true }
+            };
+
+            const comparison = {};
+            
+            Object.keys(metrics).forEach(metric => {
+                const values = data.map(car => metrics[metric].extractor(car[metric]));
+                
+                if (values.every(v => v !== null)) {
+                    if (metrics[metric].higherIsBetter) {
+                        comparison[metric] = values.indexOf(Math.max(...values));
+                    } else {
+                        comparison[metric] = values.indexOf(Math.min(...values));
+                    }
+                }
+            });
+            
+            return comparison;
+        }
+
+        $('#comparisonForm').on('submit', function(e) {
+            e.preventDefault();
+
+            const model1 = $('#model1').val();
+            const model2 = $('#model2').val();
+
+            if (!model1 || !model2) {
+                alert("Please select both models before comparing.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('models[]', model1);
+            formData.append('models[]', model2);
+
+            $.ajax({
+                url: '/compare',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(data) {
+                    let html = '<h2>Comparison Results</h2><table><tr>';
+                    if (data.length > 0) {
+                        const betterValues = compareMetrics(data);
+                        
+                        Object.keys(data[0]).forEach(key => {
+                            html += `<th>${key}</th>`;
+                        });
+                        html += '</tr>';
+                        
+                        data.forEach((car, carIndex) => {
+                            html += '<tr>';
+                            Object.entries(car).forEach(([key, value]) => {
+                                let cellClass = '';
+                                let indicator = '';
+                                
+                                if (betterValues[key] === carIndex) {
+                                    cellClass = 'better-value';
+                                    indicator = '<span class="indicator">★</span>';
+                                }
+                                
+                                html += `<td class="${cellClass}">${value} ${indicator}</td>`;
+                            });
+                            html += '</tr>';
+                        });
+                        html += '</table>';
+                        
+                        html += '<div class="legend">';
+                        html += '<p><span class="indicator">★</span> = Better value</p>';
+                        html += '<p><small>Note: Fuel Economy comparison uses average of city/highway MPG</small></p>';
+                        html += '<p><small>HP per $1000 shows horsepower value per thousand dollars</small></p>';
+                        html += '</div>';
+                    } else {
+                        html += '<p>No data found.</p>';
+                    }
+                    $('#comparisonResults').html(html);
+                },
+                error: function(err) {
+                    console.error("Error:", err);
+                    alert("Something went wrong. Check the console.");
+                }
+            });
+        });
+
+        // Chat functionality
+        function appendMessage(message, isUser) {
+            const messageClass = isUser ? 'user-message' : 'bot-message';
+            const messageHtml = `<div class="${messageClass}"><p>${message}</p></div>`;
+            $('#chatMessages').append(messageHtml);
+            $('#chatMessages').scrollTop($('#chatMessages')[0].scrollHeight);
+        }
+
+        function sendMessage() {
+            const userMessage = $('#userMessage').val().trim();
+            if (!userMessage) return;
+
+            appendMessage(userMessage, true);
+            $('#userMessage').val('');
+
+            // Show typing indicator
+            appendMessage('Typing...', false);
+
+            $.ajax({
+                url: '/chat',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ message: userMessage }),
+                success: function(data) {
+                    // Remove typing indicator
+                    $('#chatMessages .bot-message:last-child').remove();
+                    
+                    if (data.response) {
+                        appendMessage(data.response, false);
+                    } else if (data.error) {
+                        appendMessage('Sorry, I encountered an error. Please try again.', false);
+                    }
+                },
+                error: function() {
+                    // Remove typing indicator
+                    $('#chatMessages .bot-message:last-child').remove();
+                    appendMessage('Sorry, I encountered an error. Please try again.', false);
+                }
+            });
+        }
+
+        $('#sendMessage').on('click', sendMessage);
+
+        $('#userMessage').on('keypress', function(e) {
+            if (e.which === 13) {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
